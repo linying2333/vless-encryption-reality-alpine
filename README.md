@@ -3,12 +3,12 @@
 
 ## 一键安装
 ```
-bash <(curl -L https://raw.githubusercontent.com/yahuisme/vless-encryption-reality/main/install.sh)
+bash <(curl -L https://github.com/linying2333/vless-encryption-reality-alpine/raw/main/install.sh)
 ```
 
 ## 无交互安装
 ```
-bash <(curl -L https://raw.githubusercontent.com/yahuisme/vless-encryption-reality/main/install.sh) install --port 12345 --uuid 'd0f6a483-51b3-44eb-94b6-1f5fc9272c81' --sni 'www.sega.com'
+bash <(curl -L https://github.com/linying2333/vless-encryption-reality-alpine/raw/main/install.sh) install --port 12345 --uuid 'd0f6a483-51b3-44eb-94b6-1f5fc9272c81' --sni 'www.sega.com'
 ```
 自行修改端口、uuid 和 sni 参数。
 
