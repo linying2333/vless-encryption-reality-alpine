@@ -116,6 +116,8 @@ check_os_and_dependencies() {
         PKG_MANAGER="dnf"
     elif command -v yum >/dev/null 2>&1; then
         PKG_MANAGER="yum"
+    elif command -v apk >/dev/null 2>&1; then
+        PKG_MANAGER="apk"
     else
         error "错误: 未知的包管理器。"
         exit 1
@@ -130,6 +132,9 @@ check_os_and_dependencies() {
                 ;;
             dnf | yum)
                 "$PKG_MANAGER" install -y jq curl >/dev/null 2>&1
+                ;;
+            apk)
+                "$PKG_MANAGER" add jq curl >/dev/null 2>&1
                 ;;
         esac
         if ! command -v jq >/dev/null 2>&1 || ! command -v curl >/dev/null 2>&1; then
@@ -148,6 +153,22 @@ pre_check() {
     check_os_and_dependencies
 }
 
+service_is_active() {
+    local svc="$1"
+
+    # OpenRC（Alpine、Gentoo 等）
+    if command -v rc-service >/dev/null 2>&1; then
+        # rc-service 用 status 并过滤得到行数判断是否已启动
+        return $(rc-service $svc status | grep -c started)
+    # 如果系统有 systemctl，优先用 systemd 方式
+    elif systemctl is-active --quiet $svc 2>/dev/null; then
+       return 1
+    else
+        echo "未知的服务管理方式!" >&2
+        return 0
+    fi
+}
+
 check_xray_status() {
     if [ ! -f "$xray_binary_path" ]; then
         xray_status_info="$(cecho "$C_YELLOW" "Xray 状态: 未安装")"
@@ -158,10 +179,11 @@ check_xray_status() {
     xray_version=$($xray_binary_path version 2>/dev/null | head -n 1 | awk '{print $2}' || echo "未知")
 
     local service_status
-    if systemctl is-active --quiet xray 2>/dev/null; then
-        service_status="$(cecho "$C_GREEN" "运行中")"
+    
+    if service_is_active xray; then
+        service_status="$(cecho "$C_RED" "未运行/未知")"
     else
-        service_status="$(cecho "$C_RED" "未运行")"
+        service_status="$(cecho "$C_GREEN" "运行中")"
     fi
 
     local feature_support
