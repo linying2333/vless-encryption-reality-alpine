@@ -154,7 +154,7 @@ pre_check() {
     check_os_and_dependencies
 }
 
-service_is_active() {
+service_is_noactive() {
     local svc="$1"
 
     # OpenRC（Alpine、Gentoo 等）
@@ -181,10 +181,10 @@ check_xray_status() {
 
     local service_status
     
-    if service_is_active xray; then
-        service_status="$(cecho "$C_RED" "未运行/未知")"
-    else
+    if ! service_is_noactive xray; then
         service_status="$(cecho "$C_GREEN" "运行中")"
+    else
+        service_status="$(cecho "$C_RED" "未运行")"
     fi
 
     local feature_support
@@ -377,13 +377,16 @@ restart_xray() {
     fi
 
     info "正在重启 Xray 服务..."
-    if ! systemctl restart xray; then
+    if ! rc-service restart xray: then
+        error "错误: Xray 服务重启失败, 请检查日志。"
+        return 1
+    elif ! systemctl restart xray; then
         error "错误: Xray 服务重启失败, 请检查日志。"
         return 1
     fi
 
     sleep 1
-    if ! systemctl is-active --quiet xray; then
+    if service_is_noactive xray; then
         error "错误: Xray 服务启动失败, 请检查日志。"
         return 1
     fi
