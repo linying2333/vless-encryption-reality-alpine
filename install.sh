@@ -10,7 +10,6 @@ set -e
 SCRIPT_VERSION="V1.7.1"
 xray_config_path="/usr/local/etc/xray/config.json"
 xray_binary_path="/usr/local/bin/xray"
-xray_install_script_url="https://github.com/XTLS/Xray-install/raw/main/install-release.sh"
 
 # 存放客户端配置信息的文件
 client_encryption_info_file=~/xray_encryption_info.txt
@@ -20,6 +19,7 @@ client_vless_link_file=~/xray_vless_reality_link.txt
 xray_status_info=""
 is_quiet=false
 PKG_MANAGER=""
+url_extra_path=""
 
 # --- 颜色定义 ---
 C_RESET='\033[0m'
@@ -95,7 +95,7 @@ get_public_ip_v6() {
 execute_official_script() {
     info "正在执行官方安装脚本..."
     # 使用 "$@" 以便将所有参数正确地传递给子脚本
-    curl -sL "$xray_install_script_url" | bash -s -- "$@"
+    curl -sL "https://github.com/XTLS/Xray-install/raw/main${url_extra_path}/install-release.sh" | bash -s -- "$@"
 }
 
 check_xray_version() {
@@ -118,6 +118,7 @@ check_os_and_dependencies() {
         PKG_MANAGER="yum"
     elif command -v apk >/dev/null 2>&1; then
         PKG_MANAGER="apk"
+        url_extra_path="/alpinelinux"
     else
         error "错误: 未知的包管理器。"
         exit 1
@@ -159,7 +160,7 @@ service_is_active() {
     # OpenRC（Alpine、Gentoo 等）
     if command -v rc-service >/dev/null 2>&1; then
         # rc-service 用 status 并过滤得到行数判断是否已启动
-        return $(rc-service $svc status | grep -c started)
+        return $(rc-service $svc status 2>/dev/null | grep -c started)
     # 如果系统有 systemctl，优先用 systemd 方式
     elif systemctl is-active --quiet $svc 2>/dev/null; then
        return 1
