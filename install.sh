@@ -395,6 +395,25 @@ restart_xray() {
     return 0
 }
 
+stop_xray() {
+    if [ ! -f "$xray_binary_path" ]; then
+        error "错误: Xray 未安装。"
+        return 1
+    fi
+
+    info "正在停止 Xray 服务..."
+    if ! rc-service xray stop; then
+        error "错误: Xray 服务停止失败, 请检查日志。"
+        return 1
+    elif ! systemctl stop xray; then
+        error "错误: Xray 服务停止失败, 请检查日志。"
+        return 1
+    fi
+
+    success "Xray 服务已成功停止！"
+    return 0
+}
+
 uninstall_xray() {
     if [ ! -f "$xray_binary_path" ]; then
         error "错误: Xray 未安装。"
@@ -686,18 +705,20 @@ press_any_key_to_continue() {
 main_menu() {
     while true; do
         clear
+        cecho "$C_CYAN" "改自 https://github.com/yahuisme/vless-encryption-reality 而来的 alpine 支持版"
         cecho "$C_CYAN" "--- Xray VLESS-Encryption + REALITY + Vision 一键脚本 v${SCRIPT_VERSION} ---"
         echo
         check_xray_status
         echo "  ${xray_status_info}"
         cecho "$C_GREEN"  "────────────────────────────────────────────────────────"
-        cecho "$C_PURPLE" "  1. 安装/重装 Xray (VLESS-Encryption + REALITY + Vision)"
+        cecho "$C_PURPLE" "  1. 一键安装/重装 Xray (VLESS-Encryption + REALITY + Vision)"
         cecho "$C_PURPLE" "  2. 更新 Xray"
         cecho "$C_PURPLE" "  3. 重启 Xray"
-        cecho "$C_PURPLE" "  4. 卸载 Xray"
-        cecho "$C_PURPLE" "  5. 查看 Xray 日志"
-        cecho "$C_PURPLE" "  6. 修改节点配置"
-        cecho "$C_PURPLE" "  7. 查看订阅信息"
+        cecho "$C_PURPLE" "  4. 停止 Xray"
+        cecho "$C_PURPLE" "  5. 卸载 Xray"
+        cecho "$C_PURPLE" "  6. 查看 Xray 日志"
+        cecho "$C_PURPLE" "  7. 修改节点配置"
+        cecho "$C_PURPLE" "  8. 查看订阅信息"
         cecho "$C_GREEN"  "────────────────────────────────────────────────────────"
         cecho "$C_RED"    "  0. 退出脚本"
         cecho "$C_GREEN"  "────────────────────────────────────────────────────────"
@@ -709,10 +730,11 @@ main_menu() {
             1) install_xray ;;
             2) update_xray ;;
             3) restart_xray ;;
-            4) uninstall_xray ;;
-            5) view_xray_log; needs_pause=false ;;
-            6) modify_config ;;
-            7) view_subscription_info ;;
+            4) stop_xray ;;
+            5) uninstall_xray ;;
+            6) view_xray_log; needs_pause=false ;;
+            7) modify_config ;;
+            8) view_subscription_info ;;
             0) success "感谢使用！"; exit 0 ;;
             *) error "无效选项。" ;;
         esac
