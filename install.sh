@@ -377,7 +377,7 @@ restart_xray() {
     fi
 
     info "正在重启 Xray 服务..."
-    if ! rc-service restart xray; then
+    if ! rc-service xray restart; then
         error "错误: Xray 服务重启失败, 请检查日志。"
         return 1
     elif ! systemctl restart xray; then
