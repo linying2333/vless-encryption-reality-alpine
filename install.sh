@@ -7,7 +7,7 @@
 set -e
 
 # --- 全局变量 ---
-SCRIPT_VERSION="V1.7.1"
+SCRIPT_VERSION="1.7.1"
 xray_config_path="/usr/local/etc/xray/config.json"
 xray_binary_path="/usr/local/bin/xray"
 
