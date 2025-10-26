@@ -157,7 +157,7 @@ pre_check() {
 service_is_noactive() {
     local svc="$1"
 
-    # OpenRC（Alpine、Gentoo 等）
+    # OpenRC（Alpine linux）
     if command -v rc-service >/dev/null 2>&1; then
         # rc-service 用 status 并过滤得到行数判断是否已启动
         return $(rc-service $svc status 2>/dev/null | grep -c started)
@@ -377,9 +377,11 @@ restart_xray() {
     fi
 
     info "正在重启 Xray 服务..."
-    if ! rc-service xray restart; then
-        error "错误: Xray 服务重启失败, 请检查日志。"
-        return 1
+    if command -v rc-service; then
+        if ! rc-service xray restart; then
+          error "错误: Xray 服务重启失败, 请检查日志。"
+          return 1
+        fi
     elif ! systemctl restart xray; then
         error "错误: Xray 服务重启失败, 请检查日志。"
         return 1
