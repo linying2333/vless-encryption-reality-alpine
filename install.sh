@@ -564,7 +564,7 @@ view_subscription_info() {
     fi
 
     local vless_url="vless://${uuid}@${address_for_url}:${port}?encryption=${encryption}&security=reality&sni=${sni}&sid=${short_id}&fp=chrome&pbk=${public_key}&flow=xtls-rprx-vision&type=tcp#${link_name_encoded}"
-    local yaml_url="- { name: \'${link_name_raw}\', type: vless, server: ${address_for_url}, port: ${port}, uuid: ${uuid}, network: tcp, udp: true, tls: true, skip-cert-verify: false, flow: xtls-rprx-vision, client-fingerprint: chrome, servername: ${sni}, reality-opts: { public-key: \"${public_key}\", short-id: ${short_id}, encryption: \"${encryption}\" } }"
+    local yaml_url="- { name: '${link_name_raw}', type: vless, server: ${address_for_url}, port: ${port}, uuid: ${uuid}, network: tcp, udp: true, tls: true, skip-cert-verify: false, flow: xtls-rprx-vision, client-fingerprint: chrome, servername: ${sni}, reality-opts: { public-key: \"${public_key}\", short-id: ${short_id}, encryption: \"${encryption}\" } }"
 
     if [ "$is_quiet" = true ]; then
         echo "${vless_url}"
