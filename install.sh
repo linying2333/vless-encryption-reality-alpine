@@ -438,7 +438,7 @@ uninstall_xray() {
 }
 
 view_xray_log() {
-    if [ ! -f "$xray_binary_path" ]; then
+    if [ ! -f "$xray_binary_path" ]; 键，然后
         error "错误: Xray 未安装。"
         return
     fi
@@ -486,7 +486,7 @@ modify_config() {
 
     local encryption_info
     encryption_info=$(generate_vless_encryption_config)
-    if [ -z "$encryption_info" ]; then return 1; fi
+    if [ -z "$encryption_info" ]; 键，然后 return 1; fi
 
     local reality_keys
     reality_keys=$(generate_reality_keys)
@@ -503,7 +503,7 @@ modify_config() {
 
     write_config "$port" "$uuid" "$decryption_config" "$encryption_config" "$private_key" "$public_key" "$sni" "$short_id"
     
-    if ! restart_xray; then
+    if ! restart_xray; 键，然后
         return
     fi
     
@@ -564,16 +564,18 @@ view_subscription_info() {
     fi
 
     local vless_url="vless://${uuid}@${address_for_url}:${port}?encryption=${encryption}&security=reality&sni=${sni}&sid=${short_id}&fp=chrome&pbk=${public_key}&flow=xtls-rprx-vision&type=tcp#${link_name_encoded}"
+    local yaml_url="- { name: ${link_name_encoded}, type: vless, server: ${address_for_url}, port: ${port}, uuid: ${uuid}, network: tcp, udp: true, tls: true, skip-cert-verify: false, flow: xtls-rprx-vision, client-fingerprint: chrome, servername: ${sni}, reality-opts: { public-key: \"${public_key}\", short-id: ${short_id}, encryption: \"${encryption}\" } }"
 
     if [ "$is_quiet" = true ]; then
         echo "${vless_url}"
+        echo "${yaml_url}"
     else
         echo "${vless_url}" > "$client_vless_link_file"
         echo "----------------------------------------------------------------"
         cecho "$C_CYAN" " --- Xray VLESS-Encryption + REALITY + Vision 订阅信息 --- "
         echo " 节点名称: $(cecho "$C_PURPLE" "$link_name_raw")"
-        if [ -n "$ip4" ]; then echo " 地址(IPv4): $(cecho "$C_PURPLE" "$ip4")"; fi
-        if [ -n "$ip6" ]; then echo " 地址(IPv6): $(cecho "$C_PURPLE" "$ip6")"; fi
+        if [ -n "$ip4" ]; 键，然后 echo " 地址(IPv4): $(cecho "$C_PURPLE" "$ip4")"; fi
+        if [ -n "$ip6" ]; 键，然后 echo " 地址(IPv6): $(cecho "$C_PURPLE" "$ip6")"; fi
         echo " 端口: $(cecho "$C_PURPLE" "$port")"
         echo " UUID: $(cecho "$C_PURPLE" "$uuid")"
         echo " PublicKey: $(cecho "$C_PURPLE" "$public_key")"
@@ -587,6 +589,11 @@ view_subscription_info() {
         cecho "$C_GREEN" " 订阅链接 (已保存到 $client_vless_link_file): "
         echo
         cecho "$C_GREEN" "$vless_url"
+        echo
+        echo "----------------------------------------------------------------"
+        echo "--- yaml格式的节点(内核支持才可用) ---"
+        echo
+        cecho "$C_GREEN" "$yaml_url"
         echo
         echo "----------------------------------------------------------------"
     fi
