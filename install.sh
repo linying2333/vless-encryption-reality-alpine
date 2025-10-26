@@ -486,7 +486,7 @@ modify_config() {
 
     local encryption_info
     encryption_info=$(generate_vless_encryption_config)
-    if [ -z "$encryption_info" ]; 键，然后 return 1; fi
+    if [ -z "$encryption_info" ]; then return 1; fi
 
     local reality_keys
     reality_keys=$(generate_reality_keys)
@@ -503,7 +503,7 @@ modify_config() {
 
     write_config "$port" "$uuid" "$decryption_config" "$encryption_config" "$private_key" "$public_key" "$sni" "$short_id"
     
-    if ! restart_xray; 键，然后
+    if ! restart_xray; then
         return
     fi
     
@@ -574,8 +574,8 @@ view_subscription_info() {
         echo "----------------------------------------------------------------"
         cecho "$C_CYAN" " --- Xray VLESS-Encryption + REALITY + Vision 订阅信息 --- "
         echo " 节点名称: $(cecho "$C_PURPLE" "$link_name_raw")"
-        if [ -n "$ip4" ]; 键，然后 echo " 地址(IPv4): $(cecho "$C_PURPLE" "$ip4")"; fi
-        if [ -n "$ip6" ]; 键，然后 echo " 地址(IPv6): $(cecho "$C_PURPLE" "$ip6")"; fi
+        if [ -n "$ip4" ]; then echo " 地址(IPv4): $(cecho "$C_PURPLE" "$ip4")"; fi
+        if [ -n "$ip6" ]; then echo " 地址(IPv6): $(cecho "$C_PURPLE" "$ip6")"; fi
         echo " 端口: $(cecho "$C_PURPLE" "$port")"
         echo " UUID: $(cecho "$C_PURPLE" "$uuid")"
         echo " PublicKey: $(cecho "$C_PURPLE" "$public_key")"
