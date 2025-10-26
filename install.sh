@@ -438,7 +438,7 @@ uninstall_xray() {
 }
 
 view_xray_log() {
-    if [ ! -f "$xray_binary_path" ]; 键，然后
+    if [ ! -f "$xray_binary_path" ]; then
         error "错误: Xray 未安装。"
         return
     fi
